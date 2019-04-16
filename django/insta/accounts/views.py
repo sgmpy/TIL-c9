@@ -4,7 +4,8 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from .forms import CustomUserChangeForm
+from .forms import CustomUserChangeForm, ProfileForm, CustomUserCreationForm
+from .models import Profile
 
 # Create your views here.
 def signup(request):
@@ -12,13 +13,14 @@ def signup(request):
         return redirect('posts:list')
     
     if request.method == 'POST':
-        signup_form = UserCreationForm(request.POST)
+        signup_form = CustomUserCreationForm(request.POST)
         if signup_form.is_valid():
             user = signup_form.save()
+            Profile.objects.create(user=user) # User의 Profile 생성
             auth_login(request, user)
             return redirect('posts:list')
     else:
-        signup_form = UserCreationForm()
+        signup_form = CustomUserCreationForm()
     return render(request, 'accounts/signup.html', {'signup_form':signup_form})
 
 # from django.contrib.auth import login as auth_login
@@ -86,3 +88,30 @@ def password(request):
     return render(request, 'accounts/password.html', {
                                 'password_change_form': password_change_form    
                             })
+
+# from .forms import ProfileForm       
+def profile_update(request):
+    profile = request.user.profile
+    if request.method == 'POST':
+        profile_form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if profile_form.is_valid():
+            profile_form.save()
+            return redirect('people', request.user.username)
+    else:
+        profile_form = ProfileForm(instance=profile)
+    return render(request, 'accounts/profile_update.html', {
+                                        'profile_form': profile_form,
+                                    })
+                                    
+
+def follow(request, user_id):
+    people = get_object_or_404(get_user_model(), id=user_id)
+    
+    if request.user in people.followers.all():
+        # 2. people을 unfollow 하기
+        people.followers.remove(request.user)
+    else:
+        # 1. people을 follow 하기
+        people.followers.add(request.user)
+    
+    return redirect('people', people.username)
