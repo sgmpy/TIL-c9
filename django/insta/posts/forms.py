@@ -23,3 +23,9 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content',]
+   
+   
+   
+        
+# OperationalError at [URL]
+# no such column: movies_score.movie_id

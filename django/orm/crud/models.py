@@ -1,8 +1,9 @@
 from django.db import models
 
 # Create your models here.
-class Post(models.Model):
+class Article(models.Model):
     title = models.TextField()
+    content = models.TextField(blank=True) # default=''
  
 # 정리
 # class Post : Django - Model, DB - Table
