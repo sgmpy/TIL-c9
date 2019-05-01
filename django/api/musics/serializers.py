@@ -12,7 +12,9 @@ class ArtistSerializer(serializers.ModelSerializer):
         model = Artist
         fields = ['id', 'name',]
 
-
+# artist : music = 1:N
+# artist.music_set
+# music.artist
 class ArtistDetailSerializer(serializers.ModelSerializer):
     music_set = MusicSerializer(many=True)
     class Meta:

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Movie Detail</h1>
+    <p>{{ movie }}</p>
+    <p>{{ movie.id }}</p>
+    <p>{{ movie.title }}</p>
+    <form action="{% url 'movies:delete' movie.id %}" method="POST">
+                        <!-- /movies/1/delete/ -->
+        {% csrf_token %}
+        <input type="submit" value="Delete"/>
+    </form>
+    
+    <hr>
+    <ul>
+        {% for comment in movie.comment_set.all %}
+        <li>
+            {{ comment.content }}
+            <form action="{% url 'movies:comments_delete' movie.id comment.id %}" method="POST">
+                                <!-- /movies/1/delete/ -->
+                {% csrf_token %}
+                <input type="submit" value="Delete"/>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    
+    <form action="{% url 'movies:comments_create' movie.id %}" method="POST">
+                        <!-- /movies/1/comments/create/ -->
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit"/>
+    </form>
+    
+</body>
+</html>
