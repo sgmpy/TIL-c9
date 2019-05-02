@@ -105,7 +105,14 @@ def comment_create(request, post_id):
         comment.post_id = post_id
         # comment.post = post
         comment.save()
-    return redirect('posts:list')
+    
+    # return redirect('posts:list')
+    return JsonResponse({
+                            'id': comment.id,
+                            'postId': post_id, 
+                            'username': comment.user.username,
+                            'content': comment.content,
+                        })
     
 
 # from django.views.decorators.http import require_http_methods
